@@ -19,17 +19,6 @@ js/app.js             state, event wiring, counters, tabs, clipboard
 assets/fonts/         Monocraft (SIL Open Font License 1.1)
 ```
 
-## Deploying
-
-The app is fully static. Any of these work with no configuration:
-
-- **Netlify / Vercel / Cloudflare Pages** — drag the folder in, or connect the repo. No build
-  command, publish directory is the repo root.
-- **GitHub Pages** — push to a repo, Settings → Pages → deploy from branch, root.
-- **Plain nginx / Apache / any shared host** — copy the files into the web root.
-
-Opening `index.html` directly from disk (`file://`) also works.
-
 ## Output formats
 
 | Tab | Target | Example |
@@ -44,12 +33,6 @@ joined with a literal `\n` escape, which the properties reader turns into a real
 
 Minecraft shows at most 2 MOTD lines of roughly 45 (safe) to 59 (hard limit) characters;
 the counters under the input flag both states.
-
-## Rebuilding the CSS
-
-`css/app.min.css` is generated from `css/styles.css`. To regenerate after editing styles,
-run the Tailwind PostCSS pipeline with `content` pointing at `index.html` and `js/*.js`,
-prepending `@tailwind base/components/utilities`, then minify.
 
 ## Credits
 
