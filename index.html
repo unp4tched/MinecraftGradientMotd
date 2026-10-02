@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0B0F19" />
+  <title>Gradient MOTD Generator — Minecraft RGB MOTD maker</title>
+  <meta name="description" content="Generate smooth per-character RGB gradients for your Minecraft server MOTD. Live pixel-perfect server list preview with copy-ready output for server.properties, EssentialsX and MiniMessage." />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Gradient MOTD Generator" />
+  <meta property="og:description" content="Interpolate silky RGB gradients across every character of your Minecraft server MOTD and copy it for server.properties, EssentialsX or MiniMessage." />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <link rel="stylesheet" href="css/app.min.css" />
+</head>
+
+<body class="min-h-screen bg-ink font-sans text-gray-200 antialiased">
+
+  <div class="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+    <div class="absolute -top-40 left-1/2 h-[480px] w-[820px] -translate-x-1/2 rounded-full bg-violet-600/15 blur-[140px]"></div>
+    <div class="absolute bottom-[-180px] right-[-120px] h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-[130px]"></div>
+    <div class="absolute bottom-[-160px] left-[-140px] h-[380px] w-[380px] rounded-full bg-rose-500/10 blur-[130px]"></div>
+    <div class="grid-bg absolute inset-0"></div>
+  </div>
+
+  <div class="mx-auto w-full max-w-6xl px-4 py-9 sm:px-6 sm:py-14">
+
+    <header class="mb-9 text-center sm:mb-12">
+      <p class="mb-3 inline-flex items-center gap-2 rounded-full border border-violet-400/20 bg-violet-500/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-300">
+        <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
+        Minecraft MOTD Toolkit
+      </p>
+      <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+        <span class="gradient-text">Gradient</span> MOTD Generator
+      </h1>
+      <p class="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-gray-400 sm:text-base">
+        Interpolate silky RGB gradients across every character of your server's Message of the Day,
+        preview it in a pixel-perfect multiplayer list, then copy it for
+        <span class="text-gray-200">server.properties</span>,
+        <span class="text-gray-200">EssentialsX</span> or
+        <span class="text-gray-200">MiniMessage</span>.
+      </p>
+    </header>
+
+    <main class="grid items-start gap-6 lg:grid-cols-2">
+
+      <section class="card p-5 sm:p-6" aria-label="Generator controls">
+
+        <div class="mb-6">
+          <div class="mb-2.5 flex items-baseline justify-between gap-3">
+            <h2 class="section-title">MOTD text</h2>
+            <span class="text-[11px] text-gray-500">Two lines max · <kbd class="kbd">Enter</kbd> starts line 2</span>
+          </div>
+          <textarea id="motdInput" rows="3" spellcheck="false" maxlength="180"
+            aria-label="MOTD text"
+            class="block w-full resize-y rounded-xl border border-white/10 bg-black/30 px-3.5 py-3 font-mono text-sm leading-relaxed text-gray-100 shadow-inner outline-none transition placeholder:text-gray-600 focus:border-violet-500/60 focus:ring-2 focus:ring-violet-500/20"
+            placeholder="Type your MOTD…"></textarea>
+
+          <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
+            <span id="lenLine1" class="len-chip" data-state="ok">Line 1 · 0/59</span>
+            <span id="lenLine2" class="len-chip" data-state="ok">Line 2 · 0/59</span>
+            <span id="lineWarn" class="len-chip hidden" data-state="bad">Only 2 lines are shown</span>
+            <span class="ml-auto text-gray-500">safe ≤ 45 · hard limit ≈ 59 chars / line</span>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <h2 class="section-title mb-2.5">Colors</h2>
+          <div class="grid grid-cols-[1fr_auto_1fr] items-end gap-2 sm:gap-3">
+            <div>
+              <label for="startPicker" class="mb-1.5 block text-[11px] font-medium text-gray-400">Start</label>
+              <div class="color-field" data-role="start">
+                <input type="color" id="startPicker" value="#ff5f6d" class="color-swatch" aria-label="Start color picker" />
+                <input type="text" id="startHex" value="#FF5F6D" spellcheck="false" autocomplete="off"
+                  class="color-hex" aria-label="Start color hex or rgb value" placeholder="#RRGGBB" />
+              </div>
+            </div>
+
+            <button id="swapColors" type="button"
+              class="mb-[3px] flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-black/30 text-gray-400 transition hover:border-violet-400/50 hover:text-white active:scale-95"
+              title="Swap start and end colors" aria-label="Swap start and end colors">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+            </button>
+
+            <div>
+              <label for="endPicker" class="mb-1.5 block text-[11px] font-medium text-gray-400">End</label>
+              <div class="color-field" data-role="end">
+                <input type="color" id="endPicker" value="#ffc371" class="color-swatch" aria-label="End color picker" />
+                <input type="text" id="endHex" value="#FFC371" spellcheck="false" autocomplete="off"
+                  class="color-hex" aria-label="End color hex or rgb value" placeholder="#RRGGBB" />
+              </div>
+            </div>
+          </div>
+          <p id="colorHint" class="mt-2 hidden text-[11px] font-medium text-rose-400">Invalid color — use #RRGGBB, RRGGBB or rgb(255, 0, 0)</p>
+        </div>
+
+        <div>
+          <div class="mb-2.5 flex items-baseline justify-between gap-3">
+            <h2 class="section-title">Font styles</h2>
+            <span class="text-[11px] text-gray-500">applies to every character</span>
+          </div>
+          <div id="styleToggles" class="grid grid-cols-5 gap-2">
+            <button type="button" class="style-btn" data-style="bold" aria-pressed="false" title="Bold (&l)">
+              <span class="style-glyph font-bold">B</span><span class="style-code">&amp;l</span>
+            </button>
+            <button type="button" class="style-btn" data-style="italic" aria-pressed="false" title="Italic (&o)">
+              <span class="style-glyph italic">I</span><span class="style-code">&amp;o</span>
+            </button>
+            <button type="button" class="style-btn" data-style="underline" aria-pressed="false" title="Underline (&n)">
+              <span class="style-glyph underline decoration-2 underline-offset-2">U</span><span class="style-code">&amp;n</span>
+            </button>
+            <button type="button" class="style-btn" data-style="strikethrough" aria-pressed="false" title="Strikethrough (&m)">
+              <span class="style-glyph line-through">S</span><span class="style-code">&amp;m</span>
+            </button>
+            <button type="button" class="style-btn" data-style="obfuscated" aria-pressed="false" title="Obfuscated (&k) — characters scramble live">
+              <span class="style-glyph">?</span><span class="style-code">&amp;k</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card p-5 sm:p-6 lg:sticky lg:top-6" aria-label="Live server list preview">
+        <div class="mb-4 flex items-baseline justify-between gap-3">
+          <h2 class="section-title">Live preview</h2>
+          <span class="flex items-center gap-1.5 text-[11px] font-medium text-emerald-400">
+            <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400"></span> updates instantly
+          </span>
+        </div>
+
+        <div class="mc-screen" id="mcScreen">
+          <div class="mc-screen-title mc-font">Play Multiplayer</div>
+
+          <div class="mc-list">
+            <div class="mc-row mc-row-active" id="mcRow">
+              <button type="button" class="mc-icon-btn" id="mcIconBtn" title="Click to upload your own 64×64 server icon">
+                <img class="mc-icon" id="mcIcon" width="60" height="60" alt="Server icon preview" />
+                <span class="mc-icon-hint mc-font">CHANGE<br />ICON</span>
+              </button>
+              <div class="mc-info">
+                <div class="mc-name mc-font" id="mcName">GradientCraft Network</div>
+                <div class="mc-motd mc-font" id="mcMotd"></div>
+              </div>
+              <div class="mc-meta">
+                <div class="mc-ping" id="mcPing" data-quality="good" title="Connection quality" aria-label="Ping: excellent">
+                  <span class="mc-bar filled"></span><span class="mc-bar filled"></span><span class="mc-bar filled"></span><span class="mc-bar filled"></span><span class="mc-bar filled"></span>
+                </div>
+                <div class="mc-players mc-font">0/20</div>
+              </div>
+            </div>
+
+            <div class="mc-row mc-row-muted" aria-hidden="true">
+              <img class="mc-icon" id="mcDefaultIcon" width="60" height="60" alt="" />
+              <div class="mc-info">
+                <div class="mc-name mc-font">A Minecraft Server</div>
+                <div class="mc-motd mc-font"><div class="mc-line" style="color:#AAAAAA;text-shadow:1.5px 1.5px 0 #2A2A2A">Nothing beats a classic.</div></div>
+              </div>
+              <div class="mc-meta">
+                <div class="mc-ping mc-ping-mid" data-quality="mid">
+                  <span class="mc-bar filled"></span><span class="mc-bar filled"></span><span class="mc-bar filled"></span><span class="mc-bar"></span><span class="mc-bar"></span>
+                </div>
+                <div class="mc-players mc-font">0/20</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mc-buttons">
+            <div class="mc-btn-row">
+              <button type="button" class="mc-btn mc-font mc-btn-primary">Join Server</button>
+              <button type="button" class="mc-btn mc-font">Direct Connect</button>
+              <button type="button" class="mc-btn mc-font">Add Server</button>
+            </div>
+            <div class="mc-btn-row">
+              <button type="button" class="mc-btn mc-font">Edit</button>
+              <button type="button" class="mc-btn mc-font">Delete</button>
+              <button type="button" class="mc-btn mc-font" id="mcRefresh" title="Re-ping">Refresh</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-2 text-[11px] text-gray-500">
+          <span>Click the icon to upload a custom <span class="text-gray-400">64×64 PNG</span></span>
+          <span>Row layout matches the vanilla multiplayer list</span>
+        </div>
+      </section>
+    </main>
+
+    <section class="card mt-6 p-5 sm:p-6" aria-label="Generated output">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 class="section-title mb-1">Generated output</h2>
+          <p class="text-[11px] text-gray-500">Per-character LERP across each line · style codes re-applied after every color</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="tabs" role="tablist" aria-label="Output format">
+            <button type="button" class="tab" role="tab" data-tab="vanilla" aria-selected="true">Vanilla</button>
+            <button type="button" class="tab" role="tab" data-tab="ampersand" aria-selected="false">Ampersand</button>
+            <button type="button" class="tab" role="tab" data-tab="minimessage" aria-selected="false">MiniMessage</button>
+          </div>
+          <button type="button" id="copyBtn" class="copy-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span id="copyLabel">Copy</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="tab-sub hidden text-[11px] text-gray-500" data-sub="vanilla">Unicode-escaped <span class="font-mono text-gray-400">§</span> codes — paste directly after <span class="font-mono text-gray-400">motd=</span> in <span class="font-mono text-gray-400">server.properties</span>.</div>
+      <div class="tab-sub hidden text-[11px] text-gray-500" data-sub="ampersand">Ampersand hex codes — for EssentialsX &amp; plugin configs (<span class="font-mono text-gray-400">motd:</span>, chat format, etc.).</div>
+      <div class="tab-sub hidden text-[11px] text-gray-500" data-sub="minimessage">Adventure MiniMessage tags — for Paper/Spigot plugins using the modern text API.</div>
+
+      <div class="mt-3 rounded-xl border border-white/10 bg-black/40">
+        <pre id="outVanilla" class="code-box tab-panel" data-panel="vanilla" aria-label="Vanilla output"></pre>
+        <pre id="outAmpersand" class="code-box tab-panel hidden" data-panel="ampersand" aria-label="Ampersand output"></pre>
+        <pre id="outMiniMessage" class="code-box tab-panel hidden" data-panel="minimessage" aria-label="MiniMessage output"></pre>
+      </div>
+    </section>
+
+    <footer class="mt-8 flex flex-col items-center gap-2 text-center text-[11px] leading-relaxed text-gray-600 sm:mt-10">
+      <p>Colors lerp linearly from start to end across every character of each line — every glyph gets its own exact hex step.</p>
+      <p>Preview uses the open-source <span class="text-gray-500">Monocraft</span> typeface · not affiliated with Mojang.</p>
+    </footer>
+  </div>
+
+  <input type="file" id="iconUpload" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden" tabindex="-1" />
+
+  <noscript>
+    <div style="max-width:640px;margin:24px auto;padding:16px 20px;border:1px solid rgba(255,255,255,.12);border-radius:14px;background:#111827;color:#e5e7eb;font-family:system-ui,sans-serif">
+      <strong style="display:block;margin-bottom:6px">JavaScript is required</strong>
+      This tool generates MOTD strings live in your browser. Please enable JavaScript to use it.
+    </div>
+  </noscript>
+
+  <script src="js/color.js"></script>
+  <script src="js/gradient.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
